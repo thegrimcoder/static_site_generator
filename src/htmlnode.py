@@ -12,11 +12,11 @@ class HTMLNode:
     
     def props_to_html(self):
         html_string = ""
-        #print(self.props)
-        for p in self.props:
-            print(p)
-            html_string += f" {p.key}:{p.value}"
+        keys = self.props.keys()
+        for k in keys:
+            html_string += f' {k}="{self.props[k]}"'
         return html_string
         
     def __repr__(self):
-        return f"tag: {self.tag} - value: {self.value} - children: {self.children} - props: {self.props}"
+        html_string = self.props_to_html()
+        return f"tag: {self.tag} - value: {self.value} - children: {self.children} - props:{html_string}"
