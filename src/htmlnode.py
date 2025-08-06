@@ -12,11 +12,15 @@ class HTMLNode:
     
     def props_to_html(self):
         html_string = ""
-        keys = self.props.keys()
-        for k in keys:
-            html_string += f' {k}="{self.props[k]}"'
+
+        if not self.props:
+            return ""
+
+        for k, v in self.props.items():
+            html_string += f' {k}="{v}"'
+
         return html_string
         
     def __repr__(self):
-        html_string = self.props_to_html()
-        return f"tag: {self.tag} - value: {self.value} - children: {self.children} - props:{html_string}"
+        #html_string = self.props_to_html()
+        return f"tag: {self.tag} - value: {self.value} - children: {len(self.children) if self.children else 0} - props:{self.props}"
