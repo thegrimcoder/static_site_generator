@@ -11,4 +11,4 @@ class ParentNode(HTMLNode):
         elif not self.children:
             raise ValueError("No children")
         else:
-            
+            pass        
