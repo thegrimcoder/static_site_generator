@@ -7,7 +7,7 @@ def split_nodes_image(old_nodes):
     new_nodes = []
 
     for node in old_nodes:
-        pass
+        print(f"Node: {node}")
 
 def split_nodes_link(old_nodes):
     new_nodes = []
