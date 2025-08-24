@@ -18,7 +18,7 @@ def text_to_textnodes(text):
     text_nodes = split_nodes_image(text_nodes)
     #print(text_nodes)
     text_nodes = split_nodes_link(text_nodes)
-    print(text_nodes)
+    #print(text_nodes)
 
     return text_nodes
     
