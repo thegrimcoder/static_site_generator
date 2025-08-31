@@ -6,7 +6,7 @@ from textnode import TextNode
 
 def main():
     copy_dir_recursively("static/", "public/")
-    generate_page("content/index.md", "./template.html", "public/index.html")
+    generate_pages_recursive("content", "./template.html", "public")
 
 def copy_dir_recursively(source_path, destination_path):
     print(f"Deleting all contents of '{destination_path}'...")
@@ -63,7 +63,7 @@ def generate_page(from_path, template_path, dest_path):
         raise FileNotFoundError(f"File not found at: {template_path}")
     html_node = markdown_to_html_node(markdown)
 
-    print(f"HTML Node: {html_node}")
+    #print(f"HTML Node: {html_node}")
 
     html_str = html_node.to_html()
 
@@ -75,6 +75,13 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, 'w') as f:
         f.write(template)
 
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    print(f"Generating pages from {dir_path_content} to {dest_dir_path} using {template_path}")
+    for item in os.listdir(dir_path_content):
+        if os.path.isfile(os.path.join(dir_path_content, item)) and item.endswith(".md"):
+            generate_page(os.path.join(dir_path_content, item), template_path, dest_dir_path)
+        elif os.path.isdir(os.path.join(dir_path_content, item)):
+            generate_pages_recursive(os.path.join(dir_path_content, item), template_path, dest_dir_path)
     
 
 if __name__ == "__main__":
