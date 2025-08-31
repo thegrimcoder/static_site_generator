@@ -6,7 +6,7 @@ from textnode import TextNode
 
 def main():
     copy_dir_recursively("static/", "public/")
-    generate_pages_recursive("content", "./template.html", "public")
+    generate_pages_recursive("content/", "./template.html", "public/")
 
 def copy_dir_recursively(source_path, destination_path):
     print(f"Deleting all contents of '{destination_path}'...")
@@ -79,9 +79,14 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
     print(f"Generating pages from {dir_path_content} to {dest_dir_path} using {template_path}")
     for item in os.listdir(dir_path_content):
         if os.path.isfile(os.path.join(dir_path_content, item)) and item.endswith(".md"):
-            generate_page(os.path.join(dir_path_content, item), template_path, dest_dir_path)
+            new_file = item.replace(".md", ".html")
+            generate_page(os.path.join(dir_path_content, item), template_path, os.path.join(dest_dir_path, new_file))
         elif os.path.isdir(os.path.join(dir_path_content, item)):
-            generate_pages_recursive(os.path.join(dir_path_content, item), template_path, dest_dir_path)
+            if not os.path.isdir(os.path.join(dest_dir_path, item)):
+                os.mkdir(os.path.join(dest_dir_path, item))
+                generate_pages_recursive(os.path.join(dir_path_content, item), template_path, os.path.join(dest_dir_path, item))
+            else:
+                generate_pages_recursive(os.path.join(dir_path_content, item), template_path, os.path.join(dest_dir_path, item))
     
 
 if __name__ == "__main__":
