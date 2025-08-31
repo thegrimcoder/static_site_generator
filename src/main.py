@@ -36,7 +36,16 @@ def _copy_recursive(source, destination):
             _copy_recursive(source_item_path, destination_item_path)
 
 def extract_title(markdown):
-    pass
+    lines = markdown.split("\n")
+
+    for line in lines:
+        line = line.strip()
+        print(f"Line: {line}")
+        if line.startswith("#"):
+            if line.startswith("# "):
+                return line.lstrip("# ").strip()
+    
+    raise Exception("No title header found")
 
 
 if __name__ == "__main__":

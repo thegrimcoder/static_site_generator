@@ -2,6 +2,7 @@ import unittest
 
 from block_to_block_type import block_to_block_type, BlockType
 from markdown_to_html_node import markdown_to_html_node
+from main import extract_title
 
 class TestBlockToBlockType(unittest.TestCase):
     """
@@ -183,6 +184,69 @@ the **same** even with inline stuff
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )
+
+    def test_valid_h1(self):
+        """
+        Test case for a valid h1 header with correct spacing.
+        """
+        markdown = "# This is a Title"
+        self.assertEqual(extract_title(markdown), "This is a Title")
+
+    def test_h1_with_leading_whitespace(self):
+        """
+        Test case for an h1 header with leading whitespace.
+        """
+        markdown = "   # Another Title"
+        self.assertEqual(extract_title(markdown), "Another Title")
+
+    def test_h1_with_trailing_whitespace(self):
+        """
+        Test case for an h1 header with trailing whitespace.
+        """
+        markdown = "# A Title with Trailing Space   "
+        self.assertEqual(extract_title(markdown), "A Title with Trailing Space")
+
+    def test_h1_with_no_space_after_hash(self):
+        """
+        Test case for an h1 header with no space after the hash.
+        This case should not be matched.
+        """
+        with self.assertRaises(Exception):
+            extract_title("#NoSpaceTitle")
+
+    def test_no_h1_header(self):
+        """
+        Test case for a markdown string with no h1 header.
+        This should raise an exception.
+        """
+        markdown = "This is a plain text file."
+        with self.assertRaises(Exception):
+            extract_title(markdown)
+
+    def test_different_header_level(self):
+        """
+        Test case for a header that is not h1 (e.g., h2).
+        This should raise an exception.
+        """
+        markdown = "## A Subheading"
+        with self.assertRaises(Exception):
+            extract_title(markdown)
+
+    def test_empty_string(self):
+        """
+        Test case for an empty markdown string.
+        This should raise an exception.
+        """
+        markdown = ""
+        with self.assertRaises(Exception):
+            extract_title(markdown)
+
+    def test_multiline_with_h1_in_middle(self):
+        """
+        Test case for a multiline string with the h1 header in the middle.
+        """
+        markdown = "Line 1\n# Middle Header\nLine 3"
+        self.assertEqual(extract_title(markdown), "Middle Header")
 
 
 if __name__ == '__main__':
