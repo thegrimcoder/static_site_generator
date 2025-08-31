@@ -14,6 +14,7 @@ class ParentNode(HTMLNode):
             html_string = f"<{self.tag}>"
             
             for child in self.children:
+                print(f"Converting child node: {child}")
                 html_string += child.to_html()
             
             html_string += f"</{self.tag}>"

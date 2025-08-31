@@ -1,10 +1,12 @@
 import os
 import shutil
 
+from markdown_to_html_node import markdown_to_html_node
 from textnode import TextNode
 
 def main():
     copy_dir_recursively("static/", "public/")
+    generate_page("content/index.md", "./template.html", "public/index.html")
 
 def copy_dir_recursively(source_path, destination_path):
     print(f"Deleting all contents of '{destination_path}'...")
@@ -40,13 +42,40 @@ def extract_title(markdown):
 
     for line in lines:
         line = line.strip()
-        print(f"Line: {line}")
+        #print(f"Line: {line}")
         if line.startswith("#"):
             if line.startswith("# "):
                 return line.lstrip("# ").strip()
     
     raise Exception("No title header found")
 
+def generate_page(from_path, template_path, dest_path):
+    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+    try:
+        with open(from_path, 'r') as f:
+            markdown = f.read()
+    except FileNotFoundError:
+        raise FileNotFoundError(f"File not found at: {from_path}")
+    try:
+        with open(template_path, 'r') as f:
+            template = f.read()
+    except FileNotFoundError:
+        raise FileNotFoundError(f"File not found at: {template_path}")
+    html_node = markdown_to_html_node(markdown)
+
+    print(f"HTML Node: {html_node}")
+
+    html_str = html_node.to_html()
+
+    title = extract_title(markdown)
+
+    template = template.replace("{{ Title }}", title)
+    template = template.replace("{{ Content }}", html_str)
+
+    with open(dest_path, 'w') as f:
+        f.write(template)
+
+    
 
 if __name__ == "__main__":
     main()
