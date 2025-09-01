@@ -6,8 +6,8 @@ from markdown_to_html_node import markdown_to_html_node
 from textnode import TextNode
 
 def main():
-    if sys.argv:
-        basepath = sys.argv
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
     else:
         basepath = "/"
     copy_dir_recursively("static/", "docs/")
@@ -55,7 +55,7 @@ def extract_title(markdown):
     raise Exception("No title header found")
 
 def generate_page(from_path, template_path, dest_path, basepath):
-    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+    #print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     try:
         with open(from_path, 'r') as f:
             markdown = f.read()
@@ -83,7 +83,7 @@ def generate_page(from_path, template_path, dest_path, basepath):
         f.write(template)
 
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
-    print(f"Generating pages from {dir_path_content} to {dest_dir_path} using {template_path}")
+    #print(f"Generating pages from {dir_path_content} to {dest_dir_path} using {template_path}")
     for item in os.listdir(dir_path_content):
         if os.path.isfile(os.path.join(dir_path_content, item)) and item.endswith(".md"):
             new_file = item.replace(".md", ".html")
