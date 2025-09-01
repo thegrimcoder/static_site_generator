@@ -1,12 +1,17 @@
 import os
 import shutil
+import sys
 
 from markdown_to_html_node import markdown_to_html_node
 from textnode import TextNode
 
 def main():
-    copy_dir_recursively("static/", "public/")
-    generate_pages_recursive("content/", "./template.html", "public/")
+    if sys.argv:
+        basepath = sys.argv
+    else:
+        basepath = "/"
+    copy_dir_recursively("static/", "docs/")
+    generate_pages_recursive("content/", "./template.html", "docs/", basepath)
 
 def copy_dir_recursively(source_path, destination_path):
     print(f"Deleting all contents of '{destination_path}'...")
@@ -49,7 +54,7 @@ def extract_title(markdown):
     
     raise Exception("No title header found")
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     try:
         with open(from_path, 'r') as f:
@@ -71,22 +76,24 @@ def generate_page(from_path, template_path, dest_path):
 
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html_str)
+    template = template.replace('href="/', f'href="{basepath}')
+    template = template.replace('src="/', f'src="{basepath}')
 
     with open(dest_path, 'w') as f:
         f.write(template)
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     print(f"Generating pages from {dir_path_content} to {dest_dir_path} using {template_path}")
     for item in os.listdir(dir_path_content):
         if os.path.isfile(os.path.join(dir_path_content, item)) and item.endswith(".md"):
             new_file = item.replace(".md", ".html")
-            generate_page(os.path.join(dir_path_content, item), template_path, os.path.join(dest_dir_path, new_file))
+            generate_page(os.path.join(dir_path_content, item), template_path, os.path.join(dest_dir_path, new_file), basepath)
         elif os.path.isdir(os.path.join(dir_path_content, item)):
             if not os.path.isdir(os.path.join(dest_dir_path, item)):
                 os.mkdir(os.path.join(dest_dir_path, item))
-                generate_pages_recursive(os.path.join(dir_path_content, item), template_path, os.path.join(dest_dir_path, item))
+                generate_pages_recursive(os.path.join(dir_path_content, item), template_path, os.path.join(dest_dir_path, item), basepath)
             else:
-                generate_pages_recursive(os.path.join(dir_path_content, item), template_path, os.path.join(dest_dir_path, item))
+                generate_pages_recursive(os.path.join(dir_path_content, item), template_path, os.path.join(dest_dir_path, item), basepath)
     
 
 if __name__ == "__main__":
